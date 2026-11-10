@@ -1,0 +1,12 @@
+# Godot generated/imported state
+.godot/
+.export/
+export_credentials.cfg
+# Local builds and signing material
+build/
+*.apk
+*.aab
+*.keystore
+*.jks
+.env
+.DS_Store

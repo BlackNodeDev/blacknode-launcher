@@ -1,0 +1,39 @@
+{
+  "programs": [
+    {
+      "id": "settings",
+      "name": "Settings",
+      "glyph": "01",
+      "description": "Appearance & scale",
+      "scene": "res://programs/settings/settings.tscn"
+    },
+    {
+      "id": "updater",
+      "name": "Updater",
+      "glyph": "02",
+      "description": "Releases & patches",
+      "scene": "res://programs/updater/updater.tscn"
+    },
+    {
+      "id": "files",
+      "name": "Files",
+      "glyph": "03",
+      "description": "Your local storage",
+      "scene": "res://programs/files/files.tscn"
+    },
+    {
+      "id": "system_info",
+      "name": "System Info",
+      "glyph": "04",
+      "description": "Device & runtime",
+      "scene": "res://programs/system_info/system_info.tscn"
+    },
+    {
+      "id": "terminal",
+      "name": "Terminal / Log",
+      "glyph": "05",
+      "description": "Read-only activity",
+      "scene": "res://programs/terminal/terminal.tscn"
+    }
+  ]
+}

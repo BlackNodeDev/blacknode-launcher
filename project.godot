@@ -1,0 +1,35 @@
+config_version=5
+
+[application]
+config/name="BlackNode Launcher"
+config/version="0.1.0"
+run/main_scene="res://ui/launcher.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/quit_on_go_back=false
+config/use_custom_user_dir=true
+config/custom_user_dir_name="BlackNodeLauncher"
+config/icon="res://ui/icon.svg"
+boot_splash/bg_color=Color(0.025, 0.035, 0.045, 1)
+boot_splash/show_image=false
+
+[autoload]
+App="*res://core/app.gd"
+
+[display]
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/size/window_width_override=432
+window/size/window_height_override=768
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+textures/vram_compression/import_etc2_astc=true
+environment/defaults/default_clear_color=Color(0.025, 0.035, 0.045, 1)
+
+[input_devices]
+pointing/emulate_mouse_from_touch=true

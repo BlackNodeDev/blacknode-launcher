@@ -1,0 +1,10 @@
+{
+  "version": "0.1.0",
+  "codename": "factory",
+  "manifest_schema": 1,
+  "patch_notes": [
+    "Factory shell with five system programs.",
+    "Local appearance settings and read-only storage browser.",
+    "Safe update checks; patch installation is reserved for a later build."
+  ]
+}
