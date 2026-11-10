@@ -1,0 +1,47 @@
+const puppeteer=require('/tmp/blacknode-test/node_modules/puppeteer-core');
+const assert=require('node:assert/strict');
+const fs=require('fs');
+(async()=>{
+ const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox']});
+ let count=0;const ok=(value,message)=>{assert(value,message);console.log('PASS',++count,message)};
+ try{
+ const p=await b.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await p.setViewport({width:412,height:915,isMobile:true,hasTouch:true,deviceScaleFactor:2});
+ const url=process.argv[2]||'http://127.0.0.1:8875/blacknode-launcher/';
+ const response=await p.goto(url);await p.waitForFunction('window.__ready===true');
+ ok(response.status()===200,'home HTTP 200');ok(await p.title()==='BlackNode Launcher','title');
+ ok(await p.evaluate(()=>VERSION==='1.0.0'),'version 1.0.0');
+ ok(await p.evaluate(()=>apps.length===2&&apps.every(a=>a.system)),'factory only original system programs');
+ ok(await p.evaluate(()=>apps.map(a=>a.id).sort().join(',')==='sys-notes,sys-settings'),'Notes and Settings preserved');
+ ok(await p.evaluate(()=>document.querySelectorAll('script[data-seed]').length===0),'no bundled third-party apps');
+ ok(await p.evaluate(()=>HOSTED==='https://blacknodedev.github.io/blacknode-launcher/'),'new updater endpoint');
+ ok(await p.evaluate(()=>db.name==='blacknode-launcher'),'isolated IndexedDB');
+ const manifest=await p.evaluate(async()=>await(await fetch('manifest.json')).json());
+ ok(manifest.name==='BlackNode Launcher'&&manifest.short_name==='BlackNode','manifest naming');
+ ok(['id','scope','start_url'].every(k=>manifest[k]==='/blacknode-launcher/'),'manifest scope');
+ await p.waitForFunction('window.__sw==="registered"');await p.evaluate(()=>navigator.serviceWorker.ready);
+ await p.reload();await p.waitForFunction('window.__ready');
+ ok(await p.evaluate(()=>!!navigator.serviceWorker.controller),'service worker controlling page');
+ ok(await p.evaluate(async()=>(await caches.keys()).includes('blacknode-launcher-v1.0.0')),'new offline cache');
+ await p.evaluate(()=>{S.hue=200;saveS();applyS()});
+ ok(await p.evaluate(()=>JSON.parse(localStorage.getItem('blacknode.settings')).hue===200),'renamed settings key persists');
+ await p.evaluate(()=>{S.hue=250;saveS();applyS()});
+ await p.screenshot({path:'/workspace/blacknode-launcher-shots/web-home.png'});
+ await p.evaluate(()=>launch('sys-notes'));
+ ok(await p.evaluate(()=>current==='sys-notes'&&alive.has('sys-notes')),'Notes launches');
+ await p.evaluate(()=>openRecents());ok(await p.evaluate(()=>recOpen()),'recents opens');
+ await p.goBack();await p.waitForFunction('!recOpen()');ok(true,'back closes recents');
+ await p.evaluate(()=>goHome());ok(await p.evaluate(()=>current===null),'home navigation');
+ await p.evaluate(()=>openSettings());ok(await p.evaluate(()=>document.querySelector('#sheet').classList.contains('open')),'settings opens');await p.evaluate(()=>closeSheet());
+ await p.evaluate(()=>{openSearch();document.querySelector('#q').value='update';doSearch()});
+ ok(await p.evaluate(()=>!!document.querySelector('#results .act')),'update search action');await p.evaluate(()=>closeOverlays());
+ await Promise.race([p.evaluate(()=>checkUpdates()),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Updater exceeded 20s')),20000))]);
+ ok(await p.evaluate(async()=>{const t=await(await caches.match('./index.html')).text();return t.includes('BlackNode Launcher')&&!t.includes('lumen-launcher')}),'update cache contains renamed page');
+ await p.setOfflineMode(true);await p.reload();await p.waitForFunction('window.__ready');
+ ok(await p.title()==='BlackNode Launcher','offline reload');await p.setOfflineMode(false);
+ await p.setViewport({width:915,height:412,isMobile:true,hasTouch:true});
+ await p.screenshot({path:'shots/landscape.png'});ok(true,'landscape render');
+ ok(errors.length===0,'no page JavaScript errors: '+errors.join('; '));
+ console.log('TOTAL',count,'passed');
+ }finally{await b.close()}
+})().catch(e=>{console.error(e);process.exitCode=1});
