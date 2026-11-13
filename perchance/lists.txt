@@ -1,0 +1,6 @@
+$meta
+  title = Blacknode Launcher
+  description = A simple offline launcher. Only system apps ship with it — add your own HTML programs or links.
+  shortTitle = Launcher // a shorter name which will appear below the app icon
+  icon = https://user.uploads.dev/file/cf0990986554ecd1acf261aa66e28362.jpg // app icon and browser tab favicon
+  
