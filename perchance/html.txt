@@ -1,0 +1,4 @@
+<div id="appCtn" hidden></div>
+<noscript><p>This demo needs JavaScript enabled.</p></noscript>
+<link rel="stylesheet" href="src/styles.css">
+<script type="module" src="src/main.js"></script>
